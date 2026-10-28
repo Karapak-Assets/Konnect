@@ -1,0 +1,1 @@
+Impliments multiplayer boilerplate and commonly used systems (session discovery, etc), making it easy to jump right into networked gameplay without all the setup.

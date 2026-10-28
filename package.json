@@ -1,0 +1,15 @@
+{
+  "name": "com.karapak.konnect",
+  "displayName": "Konnect",
+  "version": "0.1.0",
+  "unity": "6000.6",
+  "unityRelease": "6f1",
+  "description": "Impliments multiplayer boilerplate and commonly used systems (session discovery, etc), making it easy to jump right into networked gameplay without all the setup.",
+  "dependencies": {
+    "com.unity.test-framework": "1.6.0"
+  },
+  "author": {
+    "name": "Karapak_"
+  },
+  "hideInEditor": false
+}
