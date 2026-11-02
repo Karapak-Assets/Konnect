@@ -4,7 +4,8 @@
     "references": [
         "Karapak.Konnect",
         "UnityEngine.TestRunner",
-        "UnityEditor.TestRunner"
+        "UnityEditor.TestRunner",
+        "Unity.Netcode.Runtime.Tests"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

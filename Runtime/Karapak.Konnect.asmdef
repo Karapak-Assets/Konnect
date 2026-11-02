@@ -1,7 +1,10 @@
 {
     "name": "Karapak.Konnect",
     "rootNamespace": "Karapak.Konnect",
-    "references": [],
+    "references": [
+        "GUID:1491147abca9d7d4bb7105af628b223e",
+        "GUID:17023612574ebae448179ad8d0d61ada"
+    ],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,

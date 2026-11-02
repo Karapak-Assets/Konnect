@@ -2,7 +2,8 @@
     "name": "Karapak.Konnect.Editor",
     "rootNamespace": "Karapak.Konnect",
     "references": [
-        "Karapak.Konnect"
+        "Karapak.Konnect",
+        "Unity.Netcode.Editor"
     ],
     "includePlatforms": [
         "Editor"

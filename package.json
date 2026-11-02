@@ -6,7 +6,8 @@
   "unityRelease": "6f1",
   "description": "Impliments multiplayer boilerplate and commonly used systems (session discovery, etc), making it easy to jump right into networked gameplay without all the setup.",
   "dependencies": {
-    "com.unity.test-framework": "1.6.0"
+    "com.unity.test-framework": "1.6.0",
+    "com.unity.netcode.gameobjects": "2.13.3"
   },
   "author": {
     "name": "Karapak_"

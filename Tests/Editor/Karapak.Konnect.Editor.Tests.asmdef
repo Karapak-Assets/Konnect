@@ -5,7 +5,8 @@
         "Karapak.Konnect.Editor",
         "Karapak.Konnect",
         "UnityEngine.TestRunner",
-        "UnityEditor.TestRunner"
+        "UnityEditor.TestRunner",
+        "Unity.Netcode.Editor.Tests"
     ],
     "includePlatforms": [
         "Editor"
