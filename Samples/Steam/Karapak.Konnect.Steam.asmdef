@@ -1,0 +1,19 @@
+{
+    "name": "Karapak.Konnect.Steam",
+    "rootNamespace": "Karapak.Konnect.Steam",
+    "references": [
+        "GUID:17023612574ebae448179ad8d0d61ada",
+        "GUID:b5bf74460f3b0164cb8be928e8e888fb",
+        "GUID:1491147abca9d7d4bb7105af628b223e",
+        "GUID:0c0b56786e177a2489f98bc6e7ca3f4f"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
