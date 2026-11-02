@@ -1,0 +1,14 @@
+VisualElement {
+}
+
+.unity-tab-view__content-container {
+    flex-grow: 1;
+}
+
+.unity-tab__content-container {
+    flex-grow: 1;
+}
+
+.block {
+    flex-grow: 1;
+}
