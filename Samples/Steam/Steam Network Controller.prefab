@@ -73,7 +73,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1275455316234721715, guid: 335798e1aeab72549aef89eb73708a9c, type: 3}
       propertyPath: handlerRegistry.Array.data[0].key
-      value: sdr_lobby
+      value: SteamSessionHandler
       objectReference: {fileID: 0}
     - target: {fileID: 1275455316234721715, guid: 335798e1aeab72549aef89eb73708a9c, type: 3}
       propertyPath: handlerRegistry.Array.data[0].value

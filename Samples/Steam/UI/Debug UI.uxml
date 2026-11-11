@@ -16,7 +16,7 @@
                     <ui:Button text="Go!" name="host-lobby__submit"/>
                 </ui:Tab>
                 <ui:Tab label="Join" name="join-lobby" class="block" style="padding-top: 16px; padding-right: 16px; padding-bottom: 16px; padding-left: 16px;">
-                    <ui:TabView class="block" style="background-color: rgba(34, 34, 34, 0.278);">
+                    <ui:TabView name="join__parent" class="block" style="background-color: rgba(34, 34, 34, 0.278);">
                         <ui:Tab label="Public" name="join-lobby__public" class="block">
                             <ui:MultiColumnListView columns="" sort-column-descriptions=""/>
                         </ui:Tab>

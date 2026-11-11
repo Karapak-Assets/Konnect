@@ -117,7 +117,9 @@ namespace Karapak.Konnect.Steam
 
         public async override Task<bool> ShutdownAsync()
         {
-            if (!CurrentLobby.HasValue) CurrentLobby.Value.Leave();
+            if (!CurrentLobby.HasValue) return false;
+
+            CurrentLobby.Value.Leave();
             CurrentLobby = null;
             return true;
         }

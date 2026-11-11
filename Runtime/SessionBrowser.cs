@@ -8,7 +8,155 @@ using UnityEngine;
 
 namespace Karapak.Konnect
 {
-    public class SessionBrowserResult
+    public abstract class SessionBrowser : MonoBehaviour
+    {
+        public struct SearchContext
+        {
+            internal int SearchId;
+            internal int ResultsFound;
+            internal CancellationTokenSource CancelSource;
+            internal Task SearchTask;
+            public bool Cancelled => (CancelSource?.IsCancellationRequested ?? false) || (SearchTask?.IsCanceled ?? false);
+            public bool Running => !Cancelled && !(SearchTask?.IsCompleted ?? false);
+
+            internal void Cancel() => CancelSource?.Cancel();
+            internal void Dispose()
+            {
+                CancelSource.Dispose();
+            }
+        }
+
+
+        [SerializeField] private bool deferredClear;
+
+        public event Action SearchStart; // whenever addresult called or addresults called (addresults for a batch so we dont spam this event)
+        public event Action SearchUpdate; // whenever addresult called or addresults called (addresults for a batch so we dont spam this event)
+        public event Action SearchEnd; // whenever addresult called or addresults called (addresults for a batch so we dont spam this event)
+        public event Action<int> OnResultChange;
+
+        private SearchContext currentSearch;
+        private List<SessionBrowserResult> results = new List<SessionBrowserResult>();
+        public IReadOnlyList<SessionBrowserResult> Results => results.AsReadOnly();
+
+        private int LatestSearchId = 0;
+
+
+        #region Unity Messages
+
+        protected virtual void OnDestroy()
+        {
+            CancelSearch();
+            ClearResults(LatestSearchId);
+        }
+
+        #endregion
+
+        public async Task<bool> Search()
+        {
+            CancelSearch();
+
+            int id = LatestSearchId;
+
+            var ctx = new SearchContext()
+            {
+                SearchId = id,
+                ResultsFound = 0,
+                CancelSource = new CancellationTokenSource(),
+                SearchTask = null,
+            };
+            currentSearch = ctx;
+
+            SearchStart?.Invoke();
+
+            if (!deferredClear)
+                ClearResults(id, true);
+
+            try
+            {
+                await (currentSearch.SearchTask = ExecuteSearch(id, ctx.CancelSource.Token));
+
+                if (currentSearch.ResultsFound == 0)
+                    ClearResults(id, true);
+
+                SearchEnd?.Invoke();
+            }
+            catch (OperationCanceledException e)
+            {
+                // search was cancelled
+                string log = Log($"Cancelled search {id}", $"{e.Message}");
+                Debug.LogWarning(log);
+
+                ctx.Dispose();
+
+                SearchEnd?.Invoke();
+                return false;
+            }
+
+            return true;
+        }
+
+        public void CancelSearch()
+        {
+            if (currentSearch.Running)
+            {
+                currentSearch.Cancel();
+
+                //currentSearch = null;
+            }
+            UpdateSearchId();
+        }
+
+        private void UpdateSearchId()
+        {
+            LatestSearchId += 69; // ;)
+        }
+
+        protected void AddResult(int searchId, SessionBrowserResult result, bool pushUpdateEvent = false)
+        {
+            if (searchId != currentSearch.SearchId) return;
+
+            if (deferredClear && currentSearch.ResultsFound == 0) // on first result of a new search we deferred clear
+                results.Clear();
+
+            ++currentSearch.ResultsFound;
+
+            results.Add(result);
+
+            int index = results.Count - 1; // local var to capture in lambda
+            result.OnDataChanged += () => { OnResultChange?.Invoke(index); };
+
+            if (pushUpdateEvent) PushUpdateEvent();
+        }
+
+        protected void ClearResults(int searchId, bool pushUpdateEvent = false)
+        {
+            if (searchId != LatestSearchId) return;
+
+            foreach (var result in results)
+            {
+                result.Dispose(); // is this correct place?
+            }
+            results.Clear();
+
+            if (pushUpdateEvent) PushUpdateEvent();
+
+        }
+
+        protected void PushUpdateEvent()
+        {
+            SearchUpdate?.Invoke();
+        }
+
+        protected abstract Task ExecuteSearch(int searchId, CancellationToken cancelled);
+
+        private string Log(string title, string data) => Log<SessionBrowser>(title, data);
+        private string Log<T>(string title, string data)
+        {
+            return $"[{nameof(T)}]{title}: {data}";
+        }
+    }
+
+    public class SessionBrowserResult : IDisposable
     {
         // connection info (required to join it)
         public readonly string Connect;
@@ -68,149 +216,16 @@ namespace Karapak.Konnect
             OnDataChanged?.Invoke();
         }
 
-        protected void ReportLoadFault()
+        protected void NotifyLoadFault()
         {
             DataFault = true;
             NotifyDataChange();
         }
-    }
 
-    public abstract class SessionBrowser : MonoBehaviour
-    {
-        public struct SearchContext
+        public virtual void Dispose()
         {
-            internal int SearchId;
-            internal int ResultsFound;
-            internal CancellationTokenSource CancelSource;
-            internal Task SearchTask;
-            public bool Cancelled => (CancelSource?.IsCancellationRequested ?? false) || (SearchTask?.IsCanceled ?? false);
-            public bool Running => !Cancelled && !(SearchTask?.IsCompleted ?? false);
 
-            internal void Cancel() => CancelSource?.Cancel();
-            internal void Dispose()
-            {
-                CancelSource.Dispose();
-            }
-        }
-
-
-        [SerializeField] private bool deferredClear;
-
-        public event Action SearchStart; // whenever addresult called or addresults called (addresults for a batch so we dont spam this event)
-        public event Action SearchUpdate; // whenever addresult called or addresults called (addresults for a batch so we dont spam this event)
-        public event Action SearchEnd; // whenever addresult called or addresults called (addresults for a batch so we dont spam this event)
-        public event Action<int> OnResultChange;
-
-        private SearchContext currentSearch;
-        private List<SessionBrowserResult> results = new List<SessionBrowserResult>();
-        public IReadOnlyList<SessionBrowserResult> Results => results.AsReadOnly();
-
-        private int LatestSearchId = 0;
-
-
-        protected virtual void OnDestroy()
-        {
-            CancelSearch();
-        }
-
-        public async Task<bool> Search()
-        {
-            CancelSearch();
-
-            int id = LatestSearchId;
-
-            var ctx = new SearchContext()
-            {
-                SearchId = id,
-                ResultsFound = 0,
-                CancelSource = new CancellationTokenSource(),
-                SearchTask = null,
-            };
-            currentSearch = ctx;
-
-            SearchStart?.Invoke();
-
-            if (!deferredClear)
-                ClearResults(id, true);
-
-            try
-            {
-                await (currentSearch.SearchTask = ExecuteSearch(id, ctx.CancelSource.Token));
-
-                if (currentSearch.ResultsFound == 0)
-                    ClearResults(id, true);
-
-                SearchEnd?.Invoke();
-            }
-            catch (OperationCanceledException e)
-            {
-                // search was cancelled
-                string log = Log($"Cancelled search {id}", $"{e.Message}");
-                Debug.LogWarning(log);
-
-                ctx.Dispose();
-
-                SearchEnd?.Invoke();
-                return false;
-            }
-
-            return true;
-        }
-
-        public void CancelSearch()
-        {
-            if (currentSearch.Running)
-            {
-                currentSearch.Cancel();
-
-                //currentSearch = null;
-            }
-            UpdateSearchId();
-        }
-
-        protected void AddResult(int searchId, SessionBrowserResult result, bool pushUpdateEvent = false)
-        {
-            if (searchId != currentSearch.SearchId) return;
-
-            if (deferredClear && currentSearch.ResultsFound == 0) // on first result of a new search we deferred clear
-                results.Clear();
-
-            ++currentSearch.ResultsFound;
-
-            results.Add(result);
-
-            int index = results.Count - 1; // local var to capture in lambda
-            result.OnDataChanged += () => { OnResultChange?.Invoke(index); };
-
-            if (pushUpdateEvent) PushUpdateEvent();
-        }
-
-        protected void ClearResults(int searchId, bool pushUpdateEvent = false)
-        {
-            if (searchId != currentSearch.SearchId) return;
-
-            results.Clear();
-
-            if (pushUpdateEvent) PushUpdateEvent();
-
-        }
-
-        protected void PushUpdateEvent()
-        {
-            SearchUpdate?.Invoke();
-        }
-
-        protected abstract Task ExecuteSearch(int searchId, CancellationToken cancelled);
-
-        private void UpdateSearchId()
-        {
-            LatestSearchId += 69; // ;)
-        }
-
-        private string Log(string title, string data) => Log<SessionBrowser>(title, data);
-        private string Log<T>(string title, string data)
-        {
-            return $"[{nameof(T)}]{title}: {data}";
         }
     }
+
 }
