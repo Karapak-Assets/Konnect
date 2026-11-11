@@ -61,7 +61,6 @@ namespace Karapak.Konnect
             {
                 await SwitchSessionHandler(handler);
             }
-            else Debug.Log("a");
         }
         private async Task SwitchSessionHandler(ISessionHandler handler)
         {
