@@ -93,7 +93,7 @@ namespace Karapak.Konnect.Singleplayer
 
         private async void DoHostGame()
         {
-            IStartHostArgs args = new StartArgs
+            IClientHostArgs args = new StartArgs
             {
                 // nothing here
             };

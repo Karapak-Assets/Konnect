@@ -60,9 +60,6 @@ namespace Karapak.Konnect.Steam
         private UitkIdentifiers uiLinks;
 
         [SerializeField]
-        private string sessionHandlerKey = "sdr-lobby";
-
-        [SerializeField]
         private List<SessionBrowser> sessionBrowserSources;
 
 
@@ -182,6 +179,8 @@ namespace Karapak.Konnect.Steam
             uiLinks.SessionDisconnect.ControlElement.clicked += DoLeaveSession;
         }
 
+        #region Button Actions
+
         private async void DoHostGame()
         {
             string name = uiLinks.HostName.ControlElement.value;
@@ -189,7 +188,7 @@ namespace Karapak.Konnect.Steam
             Enum accessEnum = uiLinks.HostAccessLevel.ControlElement.value;
             string password = uiLinks.HostPassword.ControlElement.value;
 
-            IStartHostArgs args = new HostLobbyArgs
+            IClientHostArgs args = new HostLobbyArgs
             {
                 ServerName = name,
                 MaxPlayers = maxPlayers,
@@ -197,10 +196,15 @@ namespace Karapak.Konnect.Steam
                 Password = password
             };
 
-            await NetworkController.Singleton.SwitchSessionHandler(handlerKey: sessionHandlerKey);
-            await NetworkController.Singleton.StartHostAsync(args);
+            // does this inside the startHost call if i supply the handler name to use there
+            //await NetworkController.Singleton.SwitchSessionHandler(handlerKey: SteamSessionHandler.Name);
+            bool good = await NetworkController.Singleton.StartHostAsync(args, nameof(SteamSessionHandler));
 
-            Debug.Log("Hosted SteamLobby Session from UI");
+            if (good)
+                Debug.Log("Hosted SteamLobby Session from UI");
+            else
+                Debug.Log("Failed to Host Lobby");
+
             uiLinks.SessionInfo.ControlElement.text = "In Session";
         }
 
@@ -210,6 +214,9 @@ namespace Karapak.Konnect.Steam
             Debug.Log("Left SteamLobby Session from UI.");
             uiLinks.SessionInfo.ControlElement.text = "Not in session";
         }
+
+        #endregion
+
         private string Log(string title, string data) => Log<NetUiController>(title, data);
         private string Log<T>(string title, string data)
         {

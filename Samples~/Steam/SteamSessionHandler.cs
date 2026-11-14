@@ -13,10 +13,8 @@ namespace System.Runtime.CompilerServices
 
 namespace Karapak.Konnect.Steam
 {
-    public struct HostLobbyArgs : IStartHostArgs
+    public struct HostLobbyArgs : IClientHostArgs
     {
-        public string Handler => SteamSessionHandler.Name;
-
         public readonly int MaxPlayers { get; init; }
 
         public readonly int AccessLevel { get; init; }
@@ -26,21 +24,16 @@ namespace Karapak.Konnect.Steam
         public string Password { get; init; }
 
     }
-    public struct JoinLobbyArgs : IStartClientArgs
+    public struct JoinLobbyArgs : IClientJoinArgs
     {
-        public string Handler => SteamSessionHandler.Name;
-
         public string JoinCode { get; init; }
 
         public string PasswordAttempt { get; init; }
     }
 
     [RequireComponent(typeof(FacepunchTransport))]
-    public class SteamSessionHandler : ISessionHandler
+    public class SteamSessionHandler : SessionHandler
     {
-        public const string Name = nameof(SteamSessionHandler);
-
-
         [SerializeField]
         private FacepunchTransport transport;
 
@@ -54,7 +47,7 @@ namespace Karapak.Konnect.Steam
                 transport = GetComponent<FacepunchTransport>();
         }
 
-        public async override Task<bool> PrepareSessionClient(IStartClientArgs args)
+        public async override Task<bool> PrepareSessionClient(IClientJoinArgs args)
         {
             if (!(args is JoinLobbyArgs steamArgs))
             {
@@ -81,7 +74,7 @@ namespace Karapak.Konnect.Steam
             return true;
         }
 
-        public async override Task<bool> PrepareSessionHost(IStartHostArgs args)
+        public async override Task<bool> PrepareSessionHost(IClientHostArgs args)
         {
             if (!(args is HostLobbyArgs steamArgs))
             {
@@ -117,7 +110,7 @@ namespace Karapak.Konnect.Steam
             return joinable;
         }
 
-        public async override Task<bool> PrepareSessionServer(IStartServerArgs args)
+        public async override Task<bool> PrepareSessionServer(IServerHostArgs args)
         {
             string log = Log("Failed to prepare server", $"Cannot run steam lobby as server. Must start as a host.");
             Debug.LogError(log);

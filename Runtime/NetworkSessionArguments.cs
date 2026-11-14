@@ -2,23 +2,24 @@
 
 namespace Karapak.Konnect
 {
-    public interface IStartClientArgs
+    public interface IClientJoinArgs : IClientArgs
     {
-        public string Handler { get; }
         public string JoinCode { get; }
         public string PasswordAttempt { get; }
     }
-    public interface IStartServerArgs
+    public interface IServerHostArgs
     {
-        public string Handler { get; }
         public int MaxPlayers { get; }
         public int AccessLevel { get; }
         public string ServerName { get; }
         public string Password { get; }
     }
-    public interface IStartHostArgs : IStartClientArgs, IStartServerArgs
+    public interface IClientArgs
     {
-        string IStartClientArgs.JoinCode => "localhost";
-        string IStartClientArgs.PasswordAttempt => "null";
+        // maybe player index or character selection here? not actual join information though as hosting also impliments it
+    }
+    public interface IClientHostArgs : IServerHostArgs, IClientArgs
+    {
+
     }
 }

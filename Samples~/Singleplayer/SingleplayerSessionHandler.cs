@@ -11,24 +11,20 @@ namespace System.Runtime.CompilerServices
 
 namespace Karapak.Konnect.Singleplayer
 {
-    public struct StartArgs : IStartHostArgs
+    public struct StartArgs : IClientHostArgs
     {
-        public string Handler => SingleplayerSessionHandler.Name;
+        public readonly int MaxPlayers => 1;
 
-        public readonly int MaxPlayers { get; init; }
-
-        public readonly int AccessLevel { get; init; }
+        public readonly int AccessLevel => 0;
 
         public readonly string ServerName { get; init; }
 
-        public string Password { get; init; }
+        public string Password => null;
     }
 
     [RequireComponent(typeof(SinglePlayerTransport))]
-    public class SingleplayerSessionHandler : ISessionHandler
+    public class SingleplayerSessionHandler : SessionHandler
     {
-        public const string Name = nameof(SingleplayerSessionHandler);
-
         [SerializeField]
         private SinglePlayerTransport transport;
 
@@ -40,14 +36,14 @@ namespace Karapak.Konnect.Singleplayer
                 transport = GetComponent<SinglePlayerTransport>();
         }
 
-        public async override Task<bool> PrepareSessionClient(IStartClientArgs args)
+        public async override Task<bool> PrepareSessionClient(IClientJoinArgs args)
         {
             string log = Log("Failed to prepare client", $"Cannot run singleplayer as joining client. Must start as a host.");
             Debug.LogError(log);
             return false;
         }
 
-        public async override Task<bool> PrepareSessionHost(IStartHostArgs args)
+        public async override Task<bool> PrepareSessionHost(IClientHostArgs args)
         {
             if (!(args is StartArgs steamArgs))
             {
@@ -58,7 +54,7 @@ namespace Karapak.Konnect.Singleplayer
             return true;
         }
 
-        public async override Task<bool> PrepareSessionServer(IStartServerArgs args)
+        public async override Task<bool> PrepareSessionServer(IServerHostArgs args)
         {
             string log = Log("Failed to prepare server", $"Cannot run singleplayer as server. Must start as a host.");
             Debug.LogError(log);

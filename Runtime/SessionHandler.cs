@@ -4,13 +4,13 @@ using UnityEngine;
 
 namespace Karapak.Konnect
 {
-    public abstract class ISessionHandler : MonoBehaviour
+    public abstract class SessionHandler : MonoBehaviour
     {
         public abstract NetworkTransport Transport { get; }
 
-        public abstract Task<bool> PrepareSessionClient(IStartClientArgs args);
-        public abstract Task<bool> PrepareSessionServer(IStartServerArgs args);
-        public abstract Task<bool> PrepareSessionHost(IStartHostArgs args);
+        public abstract Task<bool> PrepareSessionClient(IClientJoinArgs args);
+        public abstract Task<bool> PrepareSessionServer(IServerHostArgs args);
+        public abstract Task<bool> PrepareSessionHost(IClientHostArgs args);
         public abstract Task<bool> ShutdownAsync();
     }
 }
