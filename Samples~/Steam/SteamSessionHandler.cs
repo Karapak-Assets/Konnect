@@ -5,6 +5,7 @@ using Steamworks.Data;
 using Unity.Netcode;
 using UnityEngine;
 
+
 namespace System.Runtime.CompilerServices
 {
     internal static class IsExternalInit { }
@@ -14,6 +15,8 @@ namespace Karapak.Konnect.Steam
 {
     public struct HostLobbyArgs : IStartHostArgs
     {
+        public string Handler => SteamSessionHandler.Name;
+
         public readonly int MaxPlayers { get; init; }
 
         public readonly int AccessLevel { get; init; }
@@ -21,9 +24,12 @@ namespace Karapak.Konnect.Steam
         public readonly string ServerName { get; init; }
 
         public string Password { get; init; }
+
     }
     public struct JoinLobbyArgs : IStartClientArgs
     {
+        public string Handler => SteamSessionHandler.Name;
+
         public string JoinCode { get; init; }
 
         public string PasswordAttempt { get; init; }
@@ -32,6 +38,9 @@ namespace Karapak.Konnect.Steam
     [RequireComponent(typeof(FacepunchTransport))]
     public class SteamSessionHandler : ISessionHandler
     {
+        public const string Name = nameof(SteamSessionHandler);
+
+
         [SerializeField]
         private FacepunchTransport transport;
 

@@ -13,6 +13,8 @@ namespace Karapak.Konnect.Singleplayer
 {
     public struct StartArgs : IStartHostArgs
     {
+        public string Handler => SingleplayerSessionHandler.Name;
+
         public readonly int MaxPlayers { get; init; }
 
         public readonly int AccessLevel { get; init; }
@@ -25,6 +27,8 @@ namespace Karapak.Konnect.Singleplayer
     [RequireComponent(typeof(SinglePlayerTransport))]
     public class SingleplayerSessionHandler : ISessionHandler
     {
+        public const string Name = nameof(SingleplayerSessionHandler);
+
         [SerializeField]
         private SinglePlayerTransport transport;
 

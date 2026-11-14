@@ -109,6 +109,18 @@ namespace Karapak.Konnect.Steam
             {
                 await Task.Delay(50);
             }
+
+            //TODO englishify this with a actual enum, facepunch doesnt expose one
+            // bits 52, 53, 54 and 55 hold the account type number, so we extract those
+            // number 1 is the individual steam user's account type
+            var accountType = (this.SteamId >> 52) & 0b1111;
+            if (accountType != 1)
+            {
+                // not a normal user
+                Debug.LogWarning($"Unable to load user {this.SteamId}");
+                return;
+            }
+
             Friend data = new Friend(this.SteamId);
 
             string rawName = data.Name;

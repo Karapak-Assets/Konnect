@@ -4,13 +4,28 @@
   "version": "0.1.0",
   "unity": "6000.6",
   "unityRelease": "6f1",
-  "description": "Impliments multiplayer boilerplate and commonly used systems (session discovery, etc), making it easy to jump right into networked gameplay without all the setup.",
+  "description": "Implements multiplayer boilerplate and commonly used systems (session discovery, etc), making it easy to jump right into networked gameplay without all the setup.",
+  "author": {
+    "name": "Karapak_"
+  },
+  "samples": [
+    {
+      "displayName": "Singleplayer Sample",
+      "description": "Example and scripts for singleplayer loopback mode.",
+      "path": "Samples~/Singleplayer"
+    },
+    {
+      "displayName": "Steam Sample",
+      "description": "Example and scripts for steam hosting/joining.",
+      "path": "Samples~/Steam"
+    }
+  ],
   "dependencies": {
     "com.unity.test-framework": "1.6.0",
     "com.unity.netcode.gameobjects": "2.13.3"
   },
-  "author": {
-    "name": "Karapak_"
-  },
+  "gitDependencies": [
+    "https://github.com/Karapak-Assets/Kommon.git"
+  ],
   "hideInEditor": false
 }
