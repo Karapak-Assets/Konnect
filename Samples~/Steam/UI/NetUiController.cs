@@ -179,6 +179,27 @@ namespace Karapak.Konnect.Steam
             uiLinks.SessionDisconnect.ControlElement.clicked += DoLeaveSession;
         }
 
+        public void UpdateSessionInfo()
+        {
+            if (NetworkController.Singleton.GetSessionHandlerConcrete(nameof(SteamSessionHandler), out SteamSessionHandler currentHandler))
+            {
+                if (currentHandler.CurrentLobby.HasValue)
+                {
+                    var curr = currentHandler.CurrentLobby.Value;
+                    string accessAsText = "Unknown";
+                    if (int.TryParse(curr.GetData("access"), out int accessIndex))
+                    {
+                        accessAsText = ((SteamLobbyAccess)accessIndex).ToString();
+                    }
+                    uiLinks.SessionInfo.ControlElement.text = $"In Session\nMember count: {curr.MemberCount}\nAccess level: {accessAsText}";
+                }
+                else
+                {
+                    uiLinks.SessionInfo.ControlElement.text = "Not in session";
+                }
+            }
+        }
+
         #region Button Actions
 
         private async void DoHostGame()
@@ -205,14 +226,16 @@ namespace Karapak.Konnect.Steam
             else
                 Debug.Log("Failed to Host Lobby");
 
-            uiLinks.SessionInfo.ControlElement.text = "In Session";
+            UpdateSessionInfo();
         }
 
         private async void DoLeaveSession()
         {
             await NetworkController.Singleton.ShutdownAsync();
+
             Debug.Log("Left SteamLobby Session from UI.");
-            uiLinks.SessionInfo.ControlElement.text = "Not in session";
+
+            UpdateSessionInfo();
         }
 
         #endregion

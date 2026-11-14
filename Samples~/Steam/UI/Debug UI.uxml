@@ -1,5 +1,5 @@
 <ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
-    <Style src="project://database/Packages/com.karapak.konnect/Samples/Steam/UI/Debug%20Styles.uss?fileID=7433441132597879392&amp;guid=2935767e87cec9241aff67b06048c99c&amp;type=3#Debug Styles"/>
+    <Style src="project://database/Assets/Samples_Dev/com.karapak.konnect/Steam/UI/Debug%20Styles.uss?fileID=7433441132597879392&amp;guid=2935767e87cec9241aff67b06048c99c&amp;type=3#Debug Styles"/>
     <ui:VisualElement name="root" style="flex-grow: 1; justify-content: center; align-items: center; color: rgb(255, 255, 255); -unity-text-align: upper-center; -unity-font-style: normal; margin-top: 2.5%; margin-right: 2.5%; margin-bottom: 2.5%; margin-left: 2.5%;">
         <Karapak.Kommon.UitkWindow name="window" clamp-to-parent="false" style="background-color: rgba(32, 32, 32, 0.58); width: 500px; height: 500px; position: absolute;">
             <ui:TabView name="" class="block">
@@ -8,11 +8,11 @@
                         <ui:TextField label="Lobby Name" placeholder-text="filler text" name="host-lobby__name"/>
                         <ui:IntegerField label="Player Capacity" name="host-lobby__capacity" value="2"/>
                     </ui:Foldout>
-                    <ui:Foldout text="Protection" name="host-lobby__protection" value="false">
-                        <ui:TextField label="Text Field" placeholder-text="password" hide-placeholder-on-focus="true" name="host-lobby__password"/>
-                        <ui:EnumField label="Enum" value="FriendsOnly" type="Steamworks.LobbyType, Facepunch.Steamworks.Win64" name="host-lobby__visibility"/>
+                    <ui:Foldout text="Protection" name="host-lobby__protection" value="false" enabled="true">
+                        <ui:TextField label="Password" placeholder-text="password" hide-placeholder-on-focus="true" name="host-lobby__password"/>
+                        <ui:EnumField label="Access" value="FriendsOnly" type="Karapak.Konnect.Steam.SteamLobbyAccess, Karapak.Konnect.Steam" name="host-lobby__visibility"/>
                     </ui:Foldout>
-                    <ui:Foldout text="Game Settings" name="host-lobby__game" value="false"/>
+                    <ui:Foldout text="Game Settings" name="host-lobby__game" value="false" enabled="false"/>
                     <ui:Button text="Go!" name="host-lobby__submit"/>
                 </ui:Tab>
                 <ui:Tab label="Join" name="join-lobby" class="block" style="padding-top: 16px; padding-right: 16px; padding-bottom: 16px; padding-left: 16px;">

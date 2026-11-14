@@ -30,6 +30,12 @@ namespace Karapak.Konnect.Steam
 
         public string PasswordAttempt { get; init; }
     }
+    public enum SteamLobbyAccess : int
+    {
+        InviteOnly = 0,
+        FriendsOnly = 1,
+        Public = 2
+    }
 
     [RequireComponent(typeof(FacepunchTransport))]
     public class SteamSessionHandler : SessionHandler
@@ -90,6 +96,7 @@ namespace Karapak.Konnect.Steam
             }
 
             CurrentLobby = await SteamMatchmaking.CreateLobbyAsync(steamArgs.MaxPlayers);
+
             if (!CurrentLobby.HasValue)
             {
                 string log = Log("Failed to prepare host", $"Did not create steam lobby.");
@@ -97,13 +104,19 @@ namespace Karapak.Konnect.Steam
             }
 
             var currentLobby = CurrentLobby.Value;
-            var joinable = steamArgs.AccessLevel switch
+
+            //TODO protect this cast
+            // its really just naming and we could just interpret raw ints if easier
+            // naming lets us put the enum in a UI enum field tho
+            var joinable = (SteamLobbyAccess)steamArgs.AccessLevel switch
             {
-                2 => currentLobby.SetPublic(),
-                1 => currentLobby.SetFriendsOnly(),
-                0 => currentLobby.SetPrivate(),
+                SteamLobbyAccess.Public => currentLobby.SetPublic(),
+                SteamLobbyAccess.FriendsOnly => currentLobby.SetFriendsOnly(),
+                SteamLobbyAccess.InviteOnly => currentLobby.SetPrivate(),
                 _ => false
             };
+
+            currentLobby.SetData("access", steamArgs.AccessLevel.ToString());
             currentLobby.SetGameServer(SteamClient.SteamId);
             currentLobby.SetJoinable(joinable);
 
