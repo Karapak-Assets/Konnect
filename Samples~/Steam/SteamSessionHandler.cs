@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using Netcode.Transports.Facepunch;
 using Steamworks;
@@ -75,7 +76,23 @@ namespace Karapak.Konnect.Steam
                 return false;
             }
 
-            transport.targetSteamId = parsedJoinCode;
+            CurrentLobby = await SteamMatchmaking.JoinLobbyAsync(parsedJoinCode);
+
+            if (!CurrentLobby.HasValue)
+            {
+                string log = Log("Failed to prepare client", $"Failed to join lobby.");
+                Debug.LogError(log);
+                return false;
+            }
+
+            var lobby = CurrentLobby.Value;
+
+            uint ip = 0;
+            ushort port = 0;
+            SteamId connect = 0;
+            bool result = lobby.GetGameServer(ref ip, ref port, ref connect);
+
+            transport.targetSteamId = connect;
 
             return true;
         }

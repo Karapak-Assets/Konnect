@@ -404,6 +404,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6df45b72038ff2647a6056d9e8f3af76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Karapak.Konnect.Steam::Karapak.Konnect.Steam.SteamSessionBrowser
+  deferredClear: 0
 --- !u!1 &1178588485
 GameObject:
   m_ObjectHideFlags: 0
@@ -521,11 +522,12 @@ MonoBehaviour:
       <ControlName>k__BackingField: host-lobby__submit
     <SessionBrowserParent>k__BackingField:
       <ControlName>k__BackingField: join__parent
+    <SessionBrowserJoin>k__BackingField:
+      <ControlName>k__BackingField: join-lobby__join
     <SessionInfo>k__BackingField:
       <ControlName>k__BackingField: session__info
     <SessionDisconnect>k__BackingField:
       <ControlName>k__BackingField: session__leave
-  sessionHandlerKey: SteamSessionHandler
   sessionBrowserSources:
   - {fileID: 1036088592}
 --- !u!1 &2127647305

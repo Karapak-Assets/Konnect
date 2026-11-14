@@ -55,6 +55,7 @@ namespace Karapak.Konnect
             {
                 var log = Log($"Failed to prepare client for session", $"");
                 Debug.LogError(log);
+                return false;
             }
             return manager.StartClient();
         }
@@ -68,6 +69,7 @@ namespace Karapak.Konnect
             {
                 var log = Log($"Failed to prepare server for session", $"");
                 Debug.LogError(log);
+                return false;
             }
             return manager.StartServer();
         }
@@ -81,6 +83,7 @@ namespace Karapak.Konnect
             {
                 var log = Log($"Failed to prepare host for session", $"");
                 Debug.LogError(log);
+                return false;
             }
             return manager.StartHost();
         }

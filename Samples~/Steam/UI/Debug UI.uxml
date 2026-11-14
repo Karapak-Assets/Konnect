@@ -28,8 +28,8 @@
                         </ui:Tab>
                     </ui:TabView>
                     <ui:VisualElement style="flex-grow: 0; flex-direction: row; padding-top: 16px; justify-content: space-between;">
-                        <ui:TextField placeholder-text="password" hide-placeholder-on-focus="true" style="flex-grow: 0.5;"/>
-                        <ui:Button text="Join"/>
+                        <ui:TextField placeholder-text="password" hide-placeholder-on-focus="true" name="join-lobby__password" style="flex-grow: 0.5;"/>
+                        <ui:Button text="Join" name="join-lobby__join"/>
                     </ui:VisualElement>
                 </ui:Tab>
                 <ui:Tab label="Session" name="session" class="block" style="padding-top: 16px; padding-right: 16px; padding-bottom: 16px; padding-left: 16px; flex-grow: 0; height: 100%;">

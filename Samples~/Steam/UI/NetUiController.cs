@@ -33,6 +33,8 @@ namespace Karapak.Konnect.Steam
 
             [field: SerializeField]
             public UitkLink<TabView> SessionBrowserParent { get; private set; }
+            [field: SerializeField]
+            public UitkLink<Button> SessionBrowserJoin { get; private set; }
 
             [field: SerializeField]
             public UitkLink<Label> SessionInfo { get; private set; }
@@ -49,6 +51,7 @@ namespace Karapak.Konnect.Steam
                 good &= HostPassword.Link(root);
                 good &= HostSubmit.Link(root);
                 good &= SessionBrowserParent.Link(root);
+                good &= SessionBrowserJoin.Link(root);
                 good &= SessionInfo.Link(root);
                 good &= SessionDisconnect.Link(root);
 
@@ -62,6 +65,7 @@ namespace Karapak.Konnect.Steam
         [SerializeField]
         private List<SessionBrowser> sessionBrowserSources;
 
+        private SteamSessionBrowserResult currentSelectedJoinSession;
 
         private int cachedVersion = -1;
 
@@ -86,7 +90,7 @@ namespace Karapak.Konnect.Steam
         }
 
         #endregion
-
+        int CurrentSelection { get; set; }
         private void OnUiReload(PanelRenderer panelRenderer, VisualElement rootElement, int latestVersion)
         {
             if (latestVersion == cachedVersion)
@@ -142,10 +146,6 @@ namespace Karapak.Konnect.Steam
                         var img = (Image)element;
                         var result = Get(i);
                         img.image = result.Icon;
-                    },
-                    unbindCell = (element, i) =>
-                    {
-
                     }
                 });
                 container.columns.Add(new Column
@@ -169,12 +169,23 @@ namespace Karapak.Konnect.Steam
                 });
 
                 tab.selected += async (Tab t) => { await browser.Search(); };
-
+                Action<IEnumerable<object>> onSessionBrowserSelect =
+                (IEnumerable<object> changes) =>
+                {
+                    if (container.selectedItem is SteamSessionBrowserResult result)
+                        currentSelectedJoinSession = result;
+                    else currentSelectedJoinSession = null;
+                };
+                container.selectionChanged += onSessionBrowserSelect;
                 browser.SearchStart += () => { container.RefreshItems(); };
                 browser.SearchUpdate += () => { container.RefreshItems(); };
                 browser.SearchEnd += () => { container.RefreshItems(); };
                 browser.OnResultChange += (int i) => { container.RefreshItem(i); };
+
             }
+
+            uiLinks.SessionBrowserJoin.ControlElement.clicked += DoJoinSession;
+
             // session tab
             uiLinks.SessionDisconnect.ControlElement.clicked += DoLeaveSession;
         }
@@ -191,7 +202,12 @@ namespace Karapak.Konnect.Steam
                     {
                         accessAsText = ((SteamLobbyAccess)accessIndex).ToString();
                     }
-                    uiLinks.SessionInfo.ControlElement.text = $"In Session\nMember count: {curr.MemberCount}\nAccess level: {accessAsText}";
+                    string specificLobbyInfo = "";
+                    foreach (var data in curr.Data)
+                    {
+                        specificLobbyInfo += $"{data.Key}: {data.Value}\n";
+                    }
+                    uiLinks.SessionInfo.ControlElement.text = $"In Session\nMember count: {curr.MemberCount}\nAccess level: {accessAsText}\n Lobby Metadata: {specificLobbyInfo}";
                 }
                 else
                 {
@@ -237,7 +253,37 @@ namespace Karapak.Konnect.Steam
 
             UpdateSessionInfo();
         }
+        private async void DoJoinSession()
+        {
+            if (currentSelectedJoinSession == null)
+            {
+                Debug.Log("No session selected");
+                return;
+            }
+            var connect = currentSelectedJoinSession.Connect;
+            var handler = currentSelectedJoinSession.Handler;
+            if (handler != nameof(SteamSessionHandler))
+            {
+                Debug.Log("Incompatible session");
+                return;
+            }
 
+            IClientJoinArgs args = new JoinLobbyArgs
+            {
+                JoinCode = connect,
+                PasswordAttempt = null
+            };
+
+
+            bool good = await NetworkController.Singleton.StartClientAsync(args, nameof(SteamSessionHandler));
+
+            if (good)
+                Debug.Log("Joined SteamLobby Session from UI");
+            else
+                Debug.Log("Failed to Join Lobby");
+
+            UpdateSessionInfo();
+        }
         #endregion
 
         private string Log(string title, string data) => Log<NetUiController>(title, data);
